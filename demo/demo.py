@@ -13,6 +13,7 @@ from detectron2.utils.logger import setup_logger
 from predictor import VisualizationDemo
 
 from demo_bezier import Model
+
 # constants
 WINDOW_NAME = "COCO detections"
 
@@ -63,6 +64,69 @@ def get_parser():
     return parser
 
 
+def get_size(image_size, w, h):
+    w_ratio = w / image_size[1]
+    h_ratio = h / image_size[0]
+    down_scale = max(w_ratio, h_ratio)
+    if down_scale > 1:
+        return down_scale
+    else:
+        return 1
+
+
+def test_bezier(scale=1, path_img, path_img_bezier, cps):
+    image_size = (2560, 2560)  # H x W
+    output_size = (256, 1024)
+
+    input_size = (image_size[0] // scale,
+                  image_size[1] // scale)
+    m = Model(input_size, output_size, 1 / scale).cuda()
+
+    beziers = [[]]
+    im_arrs = []
+    down_scales = []
+    
+    # imgfile = '1019.jpg'
+    # im = Image.open('tools/tests/imgs/' + imgfile)
+    im = Image.open(path_img)
+    # im.show()
+    # pad
+    w, h = im.size
+    down_scale = get_size(image_size, w, h)
+    down_scales.append(down_scale)
+    if down_scale > 1:
+        im = im.resize((int(w / down_scale), int(h / down_scale)), Image.ANTIALIAS)
+        w, h = im.size
+    padding = (0, 0, image_size[1] - w, image_size[0] - h)
+    im = ImageOps.expand(im, padding)
+    im = im.resize((input_size[1], input_size[0]), Image.ANTIALIAS)
+    im_arrs.append(np.array(im))
+
+    # cps = [152.0, 209.0, 134.1, 34.18, 365.69, 66.2, 377.0, 206.0, 345.0, 214.0, 334.31, 109.71, 190.03, 80.12, 203.0, 214.0] # 1019
+    # cps = [1193.1549,  374.1745, 1360.2979,  250.3801, 1353.9391,  254.4915,
+    #      1515.5188,  119.4304, 1519.0569,  281.8831, 1357.5431,  421.2469,
+    #      1356.0538,  416.1286, 1194.0586,  553.8478]
+
+
+    # cps = np.array(cps)[[1, 0, 3, 2, 5, 4, 7, 6, 15, 14, 13, 12, 11, 10, 9, 8]]
+    cps = np.array(cps)[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]]
+    beziers[0].append(cps)
+    beziers = [torch.from_numpy(np.stack(b)).cuda().float() for b in beziers]
+    beziers = [b / d for b, d in zip(beziers, down_scales)]
+
+    im_arrs = np.stack(im_arrs)
+    x = torch.from_numpy(im_arrs).permute(0, 3, 1, 2).cuda().float()
+    
+    x = m(x, beziers)
+    for i, roi in enumerate(x):
+        roi = roi.cpu().detach().numpy().transpose(1, 2, 0).astype(np.uint8)
+        im = Image.fromarray(roi, "RGB")
+        im.save(path_img_bezier)
+    loss = x.mean()
+    loss.backward()
+    print(m)
+
+
 if __name__ == "__main__":
     mp.set_start_method("spawn", force=True)
     args = get_parser().parse_args()
@@ -70,7 +134,8 @@ if __name__ == "__main__":
     logger.info("Arguments: " + str(args))
 
     cfg = setup_cfg(args)
-
+    output_txt_dir = 'output_bezier/'
+    output_bezier_dir = 'image_bezier/'
     demo = VisualizationDemo(cfg)
 
     if args.input:
@@ -84,10 +149,34 @@ if __name__ == "__main__":
             img = read_image(path, format="BGR")
             start_time = time.time()
             predictions, visualized_output = demo.run_on_image(img)
+            print("path: ",path)
+            name_img = os.path.basename(path)
+            # name = name_img[:-4]
+            f = open(output_bezier + name_img +'.txt', 'w+')
             # print(predictions)
             bezier = predictions["instances"].beziers
             # print(bezier[0])
-            
+            count = 1
+            for bz in bezier:
+                p = [0]*8
+                x1,y1,x2,y2,x3,y3,x4,y4,x5,y5,x6,y6,x7,y7,x8,y8 = map(int, bz)
+                p[0] = x1
+                p[2] = x4
+                p[4] = x5
+                p[6] = x8
+
+                p[1] = min(y1,y2)
+                p[3] = min(y3,y4)
+                p[5] = max(y5,y6)
+                p[7] = max(y7,y8)
+                img_bezier = name_img[:-4] +'_'+ str(count) + '.jpg'
+                path_img_bezier = os.path.join(output_bezier_dir,img_bezier)
+                test_bezier(2, path, path_img_bezier, bz)
+                f.write('{},{},{},{},{},{},{},{},{}{}'.format(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],img_bezier,'\n')
+                count+=1
+            f.close()     
+                
+
             logger.info(
                 "{}: detected {} instances in {:.2f}s".format(
                     path, len(predictions["instances"]), time.time() - start_time
