@@ -4,7 +4,7 @@ import json
 
 import torch
 from adet.layers import BezierAlign
-from adet.structures import Beziers
+# from adet.structures import Beziers
 from detectron2.layers import cat
 from torch import nn
 
