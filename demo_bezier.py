@@ -3,10 +3,10 @@ import numpy as np
 import json
 
 import torch
-from torch import nn
 from adet.layers import BezierAlign
 from adet.structures import Beziers
 from detectron2.layers import cat
+from torch import nn
 
 class Model(nn.Module):
     def __init__(self, input_size, output_size, scale):
@@ -56,8 +56,9 @@ def test(scale=2):
     im_arrs = []
     down_scales = []
     
-    imgfile = '1019.jpg'
-    im = Image.open('tools/tests/imgs/' + imgfile)
+    # imgfile = '1019.jpg'
+    # im = Image.open('tools/tests/imgs/' + imgfile)
+    im = Image.open('/content/drive/MyDrive/AIC2021/data/TestA/img_14.jpg')
     # im.show()
     # pad
     w, h = im.size
@@ -71,17 +72,21 @@ def test(scale=2):
     im = im.resize((input_size[1], input_size[0]), Image.ANTIALIAS)
     im_arrs.append(np.array(im))
 
-    cps = [152.0, 209.0, 134.1, 34.18, 365.69, 66.2, 377.0, 206.0, 345.0, 214.0, 334.31, 109.71, 190.03, 80.12, 203.0, 214.0] # 1019
+    # cps = [152.0, 209.0, 134.1, 34.18, 365.69, 66.2, 377.0, 206.0, 345.0, 214.0, 334.31, 109.71, 190.03, 80.12, 203.0, 214.0] # 1019
+    cps = [1193.1549,  374.1745, 1360.2979,  250.3801, 1353.9391,  254.4915,
+         1515.5188,  119.4304, 1519.0569,  281.8831, 1357.5431,  421.2469,
+         1356.0538,  416.1286, 1194.0586,  553.8478]
 
+
+    # cps = np.array(cps)[[1, 0, 3, 2, 5, 4, 7, 6, 15, 14, 13, 12, 11, 10, 9, 8]]
     cps = np.array(cps)[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]]
     beziers[0].append(cps)
-
     beziers = [torch.from_numpy(np.stack(b)).cuda().float() for b in beziers]
     beziers = [b / d for b, d in zip(beziers, down_scales)]
 
     im_arrs = np.stack(im_arrs)
     x = torch.from_numpy(im_arrs).permute(0, 3, 1, 2).cuda().float()
-
+    
     x = m(x, beziers)
     for i, roi in enumerate(x):
         roi = roi.cpu().detach().numpy().transpose(1, 2, 0).astype(np.uint8)
