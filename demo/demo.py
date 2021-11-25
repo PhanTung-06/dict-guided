@@ -12,7 +12,7 @@ from detectron2.data.detection_utils import read_image
 from detectron2.utils.logger import setup_logger
 from predictor import VisualizationDemo
 
-
+from demo_bezier import Model
 # constants
 WINDOW_NAME = "COCO detections"
 
@@ -84,6 +84,10 @@ if __name__ == "__main__":
             img = read_image(path, format="BGR")
             start_time = time.time()
             predictions, visualized_output = demo.run_on_image(img)
+            # print(predictions)
+            bezier = predictions["instances"].beziers
+            # print(bezier[0])
+            
             logger.info(
                 "{}: detected {} instances in {:.2f}s".format(
                     path, len(predictions["instances"]), time.time() - start_time
