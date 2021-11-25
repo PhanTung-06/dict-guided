@@ -185,8 +185,8 @@ if __name__ == "__main__":
                 bz = bz.tolist()
                 
                 count+=1
-                out_w = max(x4,x5) - min(x1,x8)
-                out_h = max(p[5],p[7]) - min(p[1],p[3])
+                out_w = (max(x4,x5) - min(x1,x8))*2
+                out_h = (max(p[5],p[7]) - min(p[1],p[3]))*2
                 output_size = (out_h, out_w)
                 test_bezier(1, path, path_img_bezier, bz, output_size)
                 f.write("{},{},{},{},{},{},{},{},{}{}".format(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],img_bezier,"\n"))
