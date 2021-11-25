@@ -194,6 +194,9 @@ if __name__ == "__main__":
                 count+=1
                 out_w = (abs(max(x4,x5) - min(x1,x8)))*2
                 out_h = (abs(max(p[5],p[7]) - min(p[1],p[3])))*2
+                if out_w == 0 or out_h == 0:
+                    out_w = 1
+                    out_h = 1
                 output_size = (out_h, out_w)
                 print(bz)
                 print(output_size)
