@@ -74,7 +74,7 @@ def get_size(image_size, w, h):
         return 1
 
 
-def test_bezier(scale=1, path_img, path_img_bezier, cps):
+def test_bezier(scale, path_img, path_img_bezier, cps):
     image_size = (2560, 2560)  # H x W
     output_size = (256, 1024)
 
@@ -171,7 +171,9 @@ if __name__ == "__main__":
                 p[7] = max(y7,y8)
                 img_bezier = name_img[:-4] +'_'+ str(count) + '.jpg'
                 path_img_bezier = os.path.join(output_bezier_dir,img_bezier)
-                test_bezier(2, path, path_img_bezier, bz)    
+                test_bezier(2, path, path_img_bezier, bz)
+                f.write("{},{},{},{},{},{},{},{},{}{}").format(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],img_bezier,"\n")
+            f.close()    
             logger.info(
                 "{}: detected {} instances in {:.2f}s".format(
                     path, len(predictions["instances"]), time.time() - start_time
