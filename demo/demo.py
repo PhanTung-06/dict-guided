@@ -192,8 +192,8 @@ if __name__ == "__main__":
                 path_img_bezier = os.path.join(output_bezier_dir,img_bezier)
                 bz = bz.tolist()
                 count+=1
-                out_w = (abs(max(x4,x5) - min(x1,x8)))*2
-                out_h = (abs(max(p[5],p[7]) - min(p[1],p[3])))*2
+                out_w = (abs(max(x4,x5) - min(x1,x8)))
+                out_h = (abs(max(p[5],p[7]) - min(p[1],p[3])))
                 if out_w == 0 or out_h == 0:
                     out_w = 1
                     out_h = 1
