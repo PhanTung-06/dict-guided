@@ -3,10 +3,10 @@ import numpy as np
 import json
 
 import torch
+from torch import nn
 from adet.layers import BezierAlign
 from adet.structures import Beziers
 from detectron2.layers import cat
-from torch import nn
 
 class Model(nn.Module):
     def __init__(self, input_size, output_size, scale):
@@ -73,7 +73,7 @@ def test(scale=2):
 
     cps = [152.0, 209.0, 134.1, 34.18, 365.69, 66.2, 377.0, 206.0, 345.0, 214.0, 334.31, 109.71, 190.03, 80.12, 203.0, 214.0] # 1019
 
-    cps = np.array(cps)[[1, 0, 3, 2, 5, 4, 7, 6, 15, 14, 13, 12, 11, 10, 9, 8]]
+    cps = np.array(cps)[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]]
     beziers[0].append(cps)
 
     beziers = [torch.from_numpy(np.stack(b)).cuda().float() for b in beziers]
