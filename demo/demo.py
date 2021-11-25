@@ -134,7 +134,7 @@ if __name__ == "__main__":
     logger.info("Arguments: " + str(args))
 
     cfg = setup_cfg(args)
-    output_txt_dir = 'output_bezier/'
+    txt_dir = 'output_bezier/'
     output_bezier_dir = 'image_bezier/'
     demo = VisualizationDemo(cfg)
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             print("path: ",path)
             name_img = os.path.basename(path)
             # name = name_img[:-4]
-            f = open(output_bezier + name_img +'.txt', 'w+')
+            f = open(txt_dir + name_img +'.txt', 'w+')
             # print(predictions)
             bezier = predictions["instances"].beziers
             # print(bezier[0])
