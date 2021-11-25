@@ -143,7 +143,12 @@ if __name__ == "__main__":
     args = get_parser().parse_args()
     logger = setup_logger()
     logger.info("Arguments: " + str(args))
-
+    if not os.path.exists('output_bezier'):
+        os.makedirs('output_bezier')
+    if not os.path.exists('image_bezier'):
+        os.makedirs('image_bezier')
+    if not os.path.exists('sample_output'):
+        os.makedirs('sample_output')
     cfg = setup_cfg(args)
     txt_dir = 'output_bezier/'
     output_bezier_dir = 'image_bezier/'
@@ -186,7 +191,7 @@ if __name__ == "__main__":
                 
                 count+=1
                 out_w = (max(x4,x5) - min(x1,x8))*2
-                out_h = (max(p[5],p[7]) - min(p[1],p[3]))*2
+                out_h = (max(p[5],p[7]) - min(p[1],p[3])*2
                 output_size = (out_h, out_w)
                 test_bezier(1, path, path_img_bezier, bz, output_size)
                 f.write("{},{},{},{},{},{},{},{},{}{}".format(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],img_bezier,"\n"))
