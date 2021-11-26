@@ -184,10 +184,14 @@ if __name__ == "__main__":
                 p[4] = x5
                 p[6] = x8
 
-                p[1] = min(y1,y2)
-                p[3] = min(y3,y4)
-                p[5] = max(y5,y6)
-                p[7] = max(y7,y8)
+                # p[1] = min(y1,y2)
+                # p[3] = min(y3,y4)
+                # p[5] = max(y5,y6)
+                # p[7] = max(y7,y8)
+                p[1] = y1
+                p[3] = y4
+                p[5] = y5
+                p[7] = y8
                 img_bezier = name_img[:-4] +'_'+ str(count) + '.jpg'
                 path_img_bezier = os.path.join(output_bezier_dir,img_bezier)
                 bz = bz.tolist()
