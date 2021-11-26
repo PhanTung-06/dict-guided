@@ -146,15 +146,15 @@ if __name__ == "__main__":
     args = get_parser().parse_args()
     logger = setup_logger()
     logger.info("Arguments: " + str(args))
-    if not os.path.exists('output_bezier_2'):
-        os.makedirs('output_bezier_2')
-    if not os.path.exists('image_bezier_2'):
-        os.makedirs('image_bezier_2')
-    if not os.path.exists('sample_output_2'):
-        os.makedirs('sample_output_2')
+    if not os.path.exists('output_bezier'):
+        os.makedirs('output_bezier')
+    if not os.path.exists('image_bezier'):
+        os.makedirs('image_bezier')
+    if not os.path.exists('sample_output'):
+        os.makedirs('sample_output')
     cfg = setup_cfg(args)
-    txt_dir = 'output_bezier_2/'
-    output_bezier_dir = 'image_bezier_2/'
+    txt_dir = 'output_bezier/'
+    output_bezier_dir = 'image_bezier/'
     demo = VisualizationDemo(cfg)
 
     if args.input:
