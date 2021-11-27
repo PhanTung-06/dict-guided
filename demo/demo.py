@@ -196,12 +196,19 @@ if __name__ == "__main__":
                 path_img_bezier = os.path.join(output_bezier_dir,img_bezier)
                 bz = bz.tolist()
                 count+=1
-                out_w = abs(max(x4,x5) - min(x1,x8))
-                out_h = abs(max(p[5],p[7]) - min(p[1],p[3]))
-                if out_w == 0 or out_h == 0:
-                    out_w = 1
-                    out_h = 1
-                output_size = (out_h, out_w)
+                # out_w = abs(max(x4,x5) - min(x1,x8))
+                # out_h = abs(max(p[5],p[7]) - min(p[1],p[3]))
+                witdh_1 = np.sqrt(((x1 - x4) ** 2) + ((y1 - y4) ** 2))
+                witdh_2 = np.sqrt(((x5 - x8) ** 2) + ((y5 - y8) ** 2))
+                maxWidth = max(int(witdh_1), int(witdh_1))
+
+                height_1 = np.sqrt(((x1 - x8) ** 2) + ((y1 - y8) ** 2))
+                height_2 = np.sqrt(((x4 - x5) ** 2) + ((y4 - y5) ** 2))
+                maxHeight = max(int(height_1), int(height_2))
+                if maxWidth <= 0 or maxHeight <= 0:
+                    maxHeight = 1
+                    maxWidth = 1
+                output_size = (maxWidth, maxHeight)
                 # print(bz)
                 # print(output_size)
                 test_bezier(1, path, path_img_bezier, bz, output_size)
