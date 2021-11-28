@@ -208,7 +208,7 @@ if __name__ == "__main__":
                 if maxWidth <= 0 or maxHeight <= 0:
                     maxHeight = 1
                     maxWidth = 1
-                output_size = (maxWidth, maxHeight)
+                output_size = (maxHeight, maxWidth)
                 # print(bz)
                 # print(output_size)
                 test_bezier(1, path, path_img_bezier, bz, output_size)
